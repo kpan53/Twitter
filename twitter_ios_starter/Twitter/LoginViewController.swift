@@ -9,11 +9,21 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-let myURL = "https://api.twitter.com/oauth/request_token"
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if UserDefaults.standard.bool(forKey: "userLoggedIn") == true {
+            self.performSegue(withIdentifier: "loginToHome", sender: self)
+        }
+    }
     
     
+    let myURL = "https://api.twitter.com/oauth/request_token"
     @IBAction func onLoginButton(_ sender: Any) {
+        //This function runs when a user successfully logs in
         TwitterAPICaller.client?.login(url: myURL, success: {
+            //This saves users info so they don't have to login again if they close the app
+            UserDefaults.standard.set(true, forKey: "userLoggedIn")
+            //This calls on the "transition" that we created earlier "loginToHome"
             self.performSegue(withIdentifier: "loginToHome", sender: self)
         }, failure: { Error in
             print ("Could not login!")
