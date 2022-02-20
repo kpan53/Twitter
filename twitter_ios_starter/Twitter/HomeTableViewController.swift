@@ -15,12 +15,25 @@ class HomeTableViewController: UITableViewController {
     var tweetArray = [NSDictionary]()
     var numberofTweets: Int!
     
+    let myRefreshControl = UIRefreshControl()
     
-    func loadTweet(){
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        loadTweets()
+        
+        myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
+        tableView.refreshControl = myRefreshControl
+
+    }
+    
+    @objc func loadTweets(){
+        
+        
+        numberofTweets = 20
         
         let myURL = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         //If we wanted to do more paramters than just add it the same way we did "count" but with a comma before
-        let myParams = ["count": 10]
+        let myParams = ["count": numberofTweets]
         
         TwitterAPICaller.client?.getDictionariesRequest(url: myURL, parameters: myParams, success: { (tweets: [NSDictionary]) in
             //Empty's ou array so it doesn't get to bug
@@ -30,6 +43,7 @@ class HomeTableViewController: UITableViewController {
             }
             
             self.tableView.reloadData()
+            self.myRefreshControl.endRefreshing()
             
         }, failure: { (Error) in
             print("Could not retireve tweets! Oh No!!!")
@@ -37,6 +51,33 @@ class HomeTableViewController: UITableViewController {
         
         
         
+    }
+    
+    func loadMoreTweets(){
+        let myURL = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        numberofTweets = numberofTweets + 20
+        let myParams = ["count": numberofTweets]
+        
+        TwitterAPICaller.client?.getDictionariesRequest(url: myURL, parameters: myParams as [String : Any], success: { (tweets: [NSDictionary]) in
+            //Empty's ou array so it doesn't get to bug
+            self.tweetArray.removeAll()
+            for tweet in tweets {
+                self.tweetArray.append(tweet)
+            }
+            
+            self.tableView.reloadData()
+            self.myRefreshControl.endRefreshing()
+            
+        }, failure: { (Error) in
+            print("Could not retireve tweets! Oh No!!!")
+        })
+    }
+    
+    //This is when the user is gettin close to the end of the page
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row + 1 == tweetArray.count {
+            loadMoreTweets()
+        }
     }
     
     
@@ -73,16 +114,7 @@ class HomeTableViewController: UITableViewController {
     }
     
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        loadTweet()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
-    }
 
     // MARK: - Table view data source
 
