@@ -26,6 +26,11 @@ class HomeTableViewController: UITableViewController {
 
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        loadTweets()
+    }
+    
     @objc func loadTweets(){
         
         
@@ -46,7 +51,7 @@ class HomeTableViewController: UITableViewController {
             self.myRefreshControl.endRefreshing()
             
         }, failure: { (Error) in
-            print("Could not retireve tweets! Oh No!!!")
+            print("\(Error) Could not retireve tweets! Oh No!!!")
         })
         
         
