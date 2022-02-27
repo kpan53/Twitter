@@ -14,6 +14,8 @@ class TweetViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     
+    @IBOutlet weak var tweetTextView: UITextView!
+    
     @IBAction func tweet(_ sender: Any) {
         if (!tweetTextView.text.isEmpty){
             TwitterAPICaller.client?.postTweet(tweetString: tweetTextView.text,
@@ -29,7 +31,7 @@ class TweetViewController: UIViewController {
         }
     }
     
-    @IBOutlet weak var tweetTextView: UITextView!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
