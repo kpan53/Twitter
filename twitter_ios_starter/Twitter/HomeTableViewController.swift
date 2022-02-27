@@ -113,6 +113,9 @@ class HomeTableViewController: UITableViewController {
         cell.tweetId = tweetArray[indexPath.row]["id"] as! Int
         
         
+        cell.setRetweeted(tweetArray[indexPath.row]["retweeted"] as! Bool)
+        
+        
         
         return cell
     }
